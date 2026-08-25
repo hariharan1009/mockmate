@@ -53,7 +53,7 @@ export default function CodeEditor() {
   const [activeTab, setActiveTab] = useState<"testcases" | "results">("testcases");
 
   // Stopwatch State
-  const [time, setTime] = useState<number>(0); // Time in seconds
+  const [time, setTime] = useState<number>(0);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -101,12 +101,12 @@ export default function CodeEditor() {
 
   useEffect(() => {
     generateQuestion();
-    resetStopwatch(); // Reset stopwatch on new question generation
+    resetStopwatch();
   }, [language, difficulty, topic]);
 
   const generateQuestion = async () => {
     setQuestionLoading(true);
-    resetStopwatch(); // Ensure stopwatch is reset before loading a new question
+    resetStopwatch();
     try {
       const response = await groq.chat.completions.create({
         messages: [{
@@ -134,7 +134,7 @@ export default function CodeEditor() {
             ]
           }`
         }],
-        model: "llama-3.3-70b-versatile",
+        model: "openai/gpt-oss-120b",  // ✅ CORRECT MODEL
         temperature: difficulty === "hard" ? 0.8 : difficulty === "medium" ? 0.7 : 0.6,
         response_format: { type: "json_object" }
       });
@@ -153,11 +153,11 @@ export default function CodeEditor() {
         timeComplexity: "Not analyzed yet",
         spaceComplexity: "Not analyzed yet"
       });
-      startStopwatch(); // Start stopwatch after question is loaded
+      startStopwatch();
     } catch (error) {
       setQuestion("We couldn't load a question. Please check your connection and try again.");
       console.error("Error generating question:", error);
-      stopStopwatch(); // Stop stopwatch if question generation fails
+      stopStopwatch();
     } finally {
       setQuestionLoading(false);
     }
@@ -181,7 +181,7 @@ export default function CodeEditor() {
       suggestion: undefined,
       correctedCode: undefined
     });
-    stopStopwatch(); // Stop stopwatch when analyzing code
+    stopStopwatch();
 
     try {
       const response = await groq.chat.completions.create({
@@ -200,7 +200,7 @@ Solution code in ${language}:
 ${code}
 \`\`\``
         }],
-        model: "llama-3.3-70b-versatile",
+        model: "openai/gpt-oss-120b",  // ✅ CORRECT MODEL
         temperature: 0.3,
         response_format: { type: "json_object" }
       });
@@ -245,7 +245,7 @@ ${code}
     setRunningTests(true);
     setTestResults([]);
     setActiveTab("results");
-    stopStopwatch(); // Stop stopwatch when running tests
+    stopStopwatch();
 
     try {
       const response = await groq.chat.completions.create({
@@ -272,7 +272,7 @@ ${code}
 Test cases to run:
 ${JSON.stringify(testCases, null, 2)}`
         }],
-        model: "llama-3.3-70b-versatile",
+        model: "openai/gpt-oss-120b",  // ✅ CORRECT MODEL
         temperature: 0,
         response_format: { type: "json_object" }
       });
@@ -298,7 +298,7 @@ ${JSON.stringify(testCases, null, 2)}`
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Coding  Challenge</h1>
+      <h1 className={styles.title}>Coding Challenge</h1>
 
       <div className={styles.questionSection}>
         <div className={styles.questionHeader}>
